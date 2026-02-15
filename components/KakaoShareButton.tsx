@@ -1,9 +1,11 @@
 "use client";
 
 import { useEffect } from "react";
+import { isTossPlatform } from "@/lib/utils";
 
 declare global {
     interface Window {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         Kakao: any;
     }
 }
@@ -24,23 +26,27 @@ export default function KakaoShareButton() {
                 window.Kakao.init(process.env.NEXT_PUBLIC_KAKAO_API_KEY);
             }
 
+            const shareUrl = isTossPlatform()
+                ? "https://myzari.kr" // TODO: Replace with Toss deep link
+                : "https://myzari.kr";
+
             window.Kakao.Share.sendDefault({
                 objectType: "feed",
                 content: {
                     title: "마이자리 - AI 풍수지리 방 진단",
                     description: "내 방의 기운은 몇 점일까요? AI가 진단하고 비보(裨補) 솔루션을 드립니다.",
-                    imageUrl: "https://myzari.kr/og-image.png", // Replace with actual OG image URL
+                    imageUrl: "https://myzari.kr/og-image.png",
                     link: {
-                        mobileWebUrl: "https://myzari.kr",
-                        webUrl: "https://myzari.kr",
+                        mobileWebUrl: shareUrl,
+                        webUrl: shareUrl,
                     },
                 },
                 buttons: [
                     {
                         title: "내 방 진단받기",
                         link: {
-                            mobileWebUrl: "https://myzari.kr",
-                            webUrl: "https://myzari.kr",
+                            mobileWebUrl: shareUrl,
+                            webUrl: shareUrl,
                         },
                     },
                 ],

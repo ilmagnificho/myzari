@@ -64,10 +64,10 @@ export function validateFile(file: File): { valid: boolean; error?: string } {
 }
 
 /**
- * Build Coupang search URL for a given query.
+ * Check if running inside Toss mini-app environment.
  */
-export function getCoupangUrl(searchQuery: string): string {
-    return `https://www.coupang.com/np/search?q=${encodeURIComponent(searchQuery)}&channel=user&component=&eventCategory=SRP`;
+export function isTossPlatform(): boolean {
+    return process.env.NEXT_PUBLIC_PLATFORM === "toss";
 }
 
 /**

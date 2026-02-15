@@ -3,6 +3,7 @@ import { openai } from "@/lib/openai";
 import { ANALYSIS_SYSTEM_PROMPT } from "@/lib/prompts";
 import { validateResponse } from "@/lib/validation";
 import type { AnalysisResult } from "@/lib/validation";
+import { saveAnalysis, isSupabaseConfigured } from "@/lib/supabase";
 
 export async function POST(request: NextRequest) {
     try {
@@ -86,6 +87,19 @@ export async function POST(request: NextRequest) {
                 { error: "분석 중 문제가 발생했습니다. 다시 시도해주세요." },
                 { status: 500 }
             );
+        }
+
+        // Extract optional Toss user ID from headers
+        const tossUserId = request.headers.get("x-toss-user-id");
+
+        // Log analysis to Supabase (non-blocking)
+        if (isSupabaseConfigured()) {
+            saveAnalysis({
+                toss_user_id: tossUserId || undefined,
+                score: analysisResult.score,
+                recommendation_key: analysisResult.recommendation_key,
+                is_paid: false,
+            }).catch(console.error);
         }
 
         return NextResponse.json(analysisResult);

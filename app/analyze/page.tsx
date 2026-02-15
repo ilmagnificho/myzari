@@ -2,8 +2,8 @@
 
 import { useState, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { resizeImage, validateFile } from "@/lib/utils";
-import { Upload, X, Compass, Camera } from "lucide-react";
+import { resizeImage, validateFile, isTossPlatform } from "@/lib/utils";
+import { Upload, X, Compass } from "lucide-react";
 
 const LOADING_MESSAGES = [
     "기의 흐름을 읽는 중...",
@@ -21,6 +21,8 @@ export default function AnalyzePage() {
     const [loadingMsgIndex, setLoadingMsgIndex] = useState(0);
     const [error, setError] = useState<string | null>(null);
     const [isDragging, setIsDragging] = useState(false);
+
+    const isToss = isTossPlatform();
 
     const handleFile = useCallback(async (file: File) => {
         setError(null);
@@ -62,6 +64,19 @@ export default function AnalyzePage() {
             return;
         }
 
+        // Toss login check (optional, for user tracking)
+        if (isToss) {
+            try {
+                const { tossLogin } = await import("@/lib/toss-sdk");
+                const user = await tossLogin();
+                if (user) {
+                    sessionStorage.setItem("tossUserId", user.userId);
+                }
+            } catch {
+                // Continue without login - non-blocking
+            }
+        }
+
         setIsAnalyzing(true);
         setLoadingMsgIndex(0);
         setError(null);
@@ -73,9 +88,19 @@ export default function AnalyzePage() {
         try {
             const base64 = await resizeImage(file);
 
+            const headers: Record<string, string> = {
+                "Content-Type": "application/json",
+            };
+
+            // Add Toss user ID header if available
+            const tossUserId = sessionStorage.getItem("tossUserId");
+            if (tossUserId) {
+                headers["X-Toss-User-Id"] = tossUserId;
+            }
+
             const response = await fetch("/api/analyze", {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
+                headers,
                 body: JSON.stringify({ image: base64 }),
             });
 
@@ -130,6 +155,12 @@ export default function AnalyzePage() {
                 <div className="w-40 h-1 rounded-full bg-cream overflow-hidden">
                     <div className="h-full bg-gold shimmer rounded-full" />
                 </div>
+                {/* IAA Ad placeholder during loading (Toss only) */}
+                {isToss && (
+                    <div className="mt-8 w-full max-w-sm">
+                        {/* TossAdBanner will be rendered here when SDK is available */}
+                    </div>
+                )}
             </div>
         );
     }

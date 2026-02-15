@@ -42,34 +42,16 @@ export default function HomePage() {
               className="inline-flex items-center gap-3 px-10 py-4.5 bg-charcoal text-offwhite rounded-full text-base font-semibold hover:bg-charcoal/90 transition-all duration-300 active:scale-[0.97] touch-target shadow-[0_8px_30px_-8px_rgba(0,0,0,0.25)]"
             >
               <Camera className="w-5 h-5" strokeWidth={1.8} />
-              무료로 방 진단하기
+              방 진단 시작하기
               <ArrowRight className="w-4 h-4" strokeWidth={2} />
             </Link>
             <p className="text-sm text-muted/60 mt-5 font-medium">
-              사진 한 장 · 3초 · 완전 무료
+              사진 한 장 · 3초 · 간략 분석 무료
+            </p>
+            <p className="text-xs text-muted/40 mt-1">
+              상세 분석은 유료 (₩3,900)
             </p>
           </div>
-        </div>
-      </section>
-
-      {/* Divider */}
-      <div className="flex justify-center py-4">
-        <div className="w-12 h-px bg-gold/15" />
-      </div>
-
-      {/* What is Pungsu */}
-      <section className="px-6 py-20 sm:py-28">
-        <div className="layout-container text-center">
-          <p className="text-xs text-gold font-semibold tracking-[0.2em] uppercase mb-4">
-            History & Wisdom
-          </p>
-          <h3 className="text-2xl sm:text-3xl font-bold text-charcoal mb-6 tracking-tight">
-            풍수지리(風水地理)란?
-          </h3>
-          <p className="text-muted text-base sm:text-lg leading-loose max-w-md mx-auto">
-            바람(風)과 물(水)의 흐름을 읽어 공간의 에너지를 다스리는 고대의 지혜.
-            좋은 기운이 머무는 공간은 그곳에 사는 사람의 마음과 운을 바꿉니다.
-          </p>
         </div>
       </section>
 
@@ -137,13 +119,13 @@ export default function HomePage() {
             지금 바로 당신의 방을<br />명당으로 만들어보세요.
           </h4>
           <p className="text-offwhite/40 text-sm mb-10">
-            무료 · 회원가입 불필요 · 이미지 즉시 삭제
+            이미지 즉시 삭제 · 간략 분석 무료
           </p>
           <Link
             href="/analyze"
             className="inline-flex items-center gap-2 px-10 py-4 bg-gold text-white rounded-full text-base font-semibold hover:bg-gold-dark transition-all duration-300 active:scale-[0.97] shadow-[0_8px_30px_-8px_rgba(197,160,89,0.3)]"
           >
-            무료 진단 시작하기
+            진단 시작하기
             <ArrowRight className="w-4 h-4" strokeWidth={2} />
           </Link>
         </div>

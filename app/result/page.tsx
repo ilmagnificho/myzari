@@ -4,14 +4,24 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { BIBO_ITEMS } from "@/constants/items";
-import { getCoupangUrl, getScoreColor, getScoreLabel } from "@/lib/utils";
+import { getScoreColor, getScoreLabel, isTossPlatform } from "@/lib/utils";
 import type { AnalysisResult } from "@/lib/validation";
-import { Copy, Check, RotateCcw, ExternalLink, ArrowLeft, Sparkles, AlertTriangle } from "lucide-react";
+import {
+    Copy,
+    Check,
+    RotateCcw,
+    ArrowLeft,
+    Sparkles,
+    AlertTriangle,
+    Lock,
+    Eye,
+} from "lucide-react";
 
 export default function ResultPage() {
     const router = useRouter();
     const [result, setResult] = useState<AnalysisResult | null>(null);
     const [copied, setCopied] = useState(false);
+    const [isPaid, setIsPaid] = useState(false);
 
     useEffect(() => {
         const stored = sessionStorage.getItem("analysisResult");
@@ -21,9 +31,16 @@ export default function ResultPage() {
         }
 
         try {
+            // eslint-disable-next-line react-hooks/exhaustive-deps
             setResult(JSON.parse(stored));
         } catch {
             router.push("/analyze");
+        }
+
+        // Check if user already purchased (from sessionStorage for now)
+        const purchaseStatus = sessionStorage.getItem("purchaseStatus");
+        if (purchaseStatus === "paid") {
+            setIsPaid(true);
         }
     }, [router]);
 
@@ -38,7 +55,7 @@ export default function ResultPage() {
     const item = BIBO_ITEMS[result.recommendation_key];
     const scoreColor = getScoreColor(result.score);
     const scoreLabel = getScoreLabel(result.score);
-    const coupangUrl = item ? getCoupangUrl(item.searchQuery) : "#";
+    const isToss = isTossPlatform();
 
     const handleCopyLink = async () => {
         try {
@@ -52,14 +69,28 @@ export default function ResultPage() {
 
     const handleRetry = () => {
         sessionStorage.removeItem("analysisResult");
+        sessionStorage.removeItem("purchaseStatus");
         router.push("/analyze");
+    };
+
+    const handlePurchase = async () => {
+        if (isToss) {
+            // TODO: Integrate with Toss IAP SDK
+            // const { requestPurchase } = await import("@/lib/toss-sdk");
+            // const token = await requestPurchase("myzari_detail_single");
+            // Verify purchase server-side, then unlock
+        }
+
+        // For now (dev/web): unlock directly for testing
+        setIsPaid(true);
+        sessionStorage.setItem("purchaseStatus", "paid");
     };
 
     return (
         <div className="flex flex-col items-center px-6 pt-20 pb-28 sm:pt-32 overflow-x-hidden">
             <div className="layout-container">
 
-                {/* ─── Score Section ─── */}
+                {/* ─── Score Section (FREE) ─── */}
                 <section className="text-center mb-14 fade-in-up flex flex-col items-center">
                     <p className="text-xs text-gold font-semibold tracking-[0.2em] uppercase mb-6">
                         Analysis Result
@@ -111,7 +142,7 @@ export default function ResultPage() {
                     </div>
                 </section>
 
-                {/* ─── Summary ─── */}
+                {/* ─── Summary (FREE) ─── */}
                 <section className="mb-10 fade-in-up stagger-1">
                     <div className="p-6 sm:p-8 rounded-2xl glass-card text-center">
                         <p className="text-charcoal leading-relaxed text-base sm:text-lg font-medium">
@@ -120,9 +151,8 @@ export default function ResultPage() {
                     </div>
                 </section>
 
-                {/* ─── Diagnosis ─── */}
+                {/* ─── Good Points ─── */}
                 <div className="space-y-8 mb-14">
-                    {/* Good Points */}
                     {result.good_points.length > 0 && (
                         <section className="fade-in-up stagger-2">
                             <div className="flex items-center gap-2 mb-4">
@@ -132,7 +162,8 @@ export default function ResultPage() {
                                 <h3 className="text-base font-bold text-charcoal">좋은 점</h3>
                             </div>
                             <div className="space-y-3">
-                                {result.good_points.map((point, i) => (
+                                {/* FREE: show only first point, PAID: show all */}
+                                {(isPaid ? result.good_points : result.good_points.slice(0, 1)).map((point, i) => (
                                     <div
                                         key={i}
                                         className="p-5 rounded-xl glass-card"
@@ -142,11 +173,25 @@ export default function ResultPage() {
                                         </p>
                                     </div>
                                 ))}
+                                {/* Locked indicator for remaining good points */}
+                                {!isPaid && result.good_points.length > 1 && (
+                                    <div className="p-5 rounded-xl glass-card opacity-50 relative overflow-hidden">
+                                        <div className="absolute inset-0 backdrop-blur-sm bg-cream/60 flex items-center justify-center z-10">
+                                            <Lock className="w-4 h-4 text-muted mr-1.5" strokeWidth={1.5} />
+                                            <span className="text-xs text-muted font-medium">
+                                                +{result.good_points.length - 1}개 더 보기
+                                            </span>
+                                        </div>
+                                        <p className="text-sm text-charcoal/30 leading-relaxed blur-sm select-none">
+                                            상세 분석에서 더 많은 좋은 점을 확인하세요.
+                                        </p>
+                                    </div>
+                                )}
                             </div>
                         </section>
                     )}
 
-                    {/* Bad Points */}
+                    {/* Bad Points - Locked for free, visible for paid */}
                     {result.bad_points.length > 0 && (
                         <section className="fade-in-up stagger-3">
                             <div className="flex items-center gap-2 mb-4">
@@ -154,18 +199,35 @@ export default function ResultPage() {
                                     <AlertTriangle className="w-3.5 h-3.5 text-score-amber" strokeWidth={2} />
                                 </div>
                                 <h3 className="text-base font-bold text-charcoal">개선할 점</h3>
+                                {!isPaid && (
+                                    <span className="ml-auto text-xs text-muted flex items-center gap-1">
+                                        <Lock className="w-3 h-3" strokeWidth={1.5} />
+                                        상세 분석 필요
+                                    </span>
+                                )}
                             </div>
                             <div className="space-y-3">
-                                {result.bad_points.map((point, i) => (
-                                    <div
-                                        key={i}
-                                        className="p-5 rounded-xl glass-card"
-                                    >
-                                        <p className="text-sm text-charcoal/80 leading-relaxed">
-                                            {point}
-                                        </p>
+                                {isPaid ? (
+                                    result.bad_points.map((point, i) => (
+                                        <div
+                                            key={i}
+                                            className="p-5 rounded-xl glass-card"
+                                        >
+                                            <p className="text-sm text-charcoal/80 leading-relaxed">
+                                                {point}
+                                            </p>
+                                        </div>
+                                    ))
+                                ) : (
+                                    /* Blurred locked state */
+                                    <div className="relative rounded-xl overflow-hidden">
+                                        <div className="p-5 glass-card">
+                                            <p className="text-sm text-charcoal/20 leading-relaxed blur-[6px] select-none pointer-events-none">
+                                                방의 동북쪽 모서리에 기운이 정체되어 있어 순환이 필요합니다. 침대 방향이 문과 일직선상에 있어 기운의 직접적인 충돌이 발생할 수 있습니다.
+                                            </p>
+                                        </div>
                                     </div>
-                                ))}
+                                )}
                             </div>
                         </section>
                     )}
@@ -173,7 +235,7 @@ export default function ResultPage() {
 
                 {/* ─── Recommendation Card ─── */}
                 {item && (
-                    <section className="mb-16 fade-in-up stagger-4">
+                    <section className="mb-10 fade-in-up stagger-4">
                         <div className="p-6 sm:p-8 rounded-2xl glass-card border border-gold/15 relative overflow-hidden">
                             <div className="absolute top-0 right-0 w-24 h-24 bg-gold/5 rounded-bl-[60px] -z-0" />
 
@@ -200,27 +262,63 @@ export default function ResultPage() {
                                     &ldquo;{item.description}&rdquo;
                                 </p>
 
-                                <div className="p-4 rounded-xl bg-cream/50 mb-6">
-                                    <p className="text-sm text-charcoal leading-relaxed">
-                                        {result.reason}
-                                    </p>
-                                </div>
-
-                                <a
-                                    href={coupangUrl}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="w-full py-4 bg-charcoal text-offwhite rounded-xl text-center text-base font-semibold hover:bg-charcoal/90 transition-all duration-300 active:scale-[0.98] shadow-[0_6px_20px_-6px_rgba(0,0,0,0.2)] flex items-center justify-center gap-2"
-                                >
-                                    최저가로 기운 채우기
-                                    <ExternalLink className="w-4 h-4" strokeWidth={1.8} />
-                                </a>
-                                <p className="text-[10px] text-muted font-medium tracking-[0.2em] uppercase mt-3 text-center opacity-40">
-                                    Coupang Partners
-                                </p>
+                                {/* Reason - only visible when paid */}
+                                {isPaid ? (
+                                    <>
+                                        <div className="p-4 rounded-xl bg-cream/50 mb-4">
+                                            <p className="text-sm text-charcoal leading-relaxed">
+                                                {result.reason}
+                                            </p>
+                                        </div>
+                                        {/* Detail Tip - paid exclusive */}
+                                        <div className="p-4 rounded-xl bg-gold/5 border border-gold/10">
+                                            <p className="text-xs text-gold font-semibold mb-1">💡 전문가 팁</p>
+                                            <p className="text-sm text-charcoal/70 leading-relaxed">
+                                                {item.detailTip}
+                                            </p>
+                                        </div>
+                                    </>
+                                ) : (
+                                    <div className="relative rounded-xl overflow-hidden">
+                                        <div className="p-4 bg-cream/50">
+                                            <p className="text-sm text-charcoal/20 leading-relaxed blur-[6px] select-none pointer-events-none">
+                                                이 방에 특별히 필요한 이유와 배치 팁을 상세 분석에서 확인하세요.
+                                            </p>
+                                        </div>
+                                    </div>
+                                )}
                             </div>
                         </div>
                     </section>
+                )}
+
+                {/* ─── Paywall CTA (Free users only) ─── */}
+                {!isPaid && (
+                    <section className="mb-14 fade-in-up stagger-5">
+                        <button
+                            onClick={handlePurchase}
+                            className="w-full py-4.5 bg-charcoal text-offwhite rounded-2xl text-base font-semibold hover:bg-charcoal/90 transition-all duration-300 active:scale-[0.98] shadow-[0_8px_30px_-8px_rgba(0,0,0,0.25)] flex items-center justify-center gap-2.5"
+                        >
+                            <Eye className="w-5 h-5" strokeWidth={1.5} />
+                            🔮 상세 분석 보기
+                            <span className="text-offwhite/60 text-sm font-medium">₩1,900</span>
+                        </button>
+                        <p className="text-center text-xs text-muted mt-3">
+                            개선할 점 · 비보 아이템 상세 · 전문가 배치 팁
+                        </p>
+                    </section>
+                )}
+
+                {/* ─── Paid Badge ─── */}
+                {isPaid && (
+                    <div className="mb-10 flex items-center justify-center gap-2 py-3 fade-in-up">
+                        <div className="w-4 h-4 rounded-full bg-score-green/10 flex items-center justify-center">
+                            <Check className="w-2.5 h-2.5 text-score-green" strokeWidth={2.5} />
+                        </div>
+                        <p className="text-xs text-score-green font-medium">
+                            상세 분석이 해제되었습니다
+                        </p>
+                    </div>
                 )}
 
                 {/* ─── Actions ─── */}
