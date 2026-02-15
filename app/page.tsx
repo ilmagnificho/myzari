@@ -11,7 +11,7 @@ export default function HomePage() {
       </div>
 
       {/* Hero Section */}
-      <section className="flex flex-col items-center justify-center px-6 pt-28 pb-24 sm:pt-44 sm:pb-36 relative z-10">
+      <section className="flex flex-col items-center justify-center px-6 pt-32 pb-28 sm:pt-48 sm:pb-40 relative z-10">
         <div className="layout-container text-center">
           {/* Logo */}
           <div className="mb-14 fade-in-up flex flex-col items-center">
@@ -66,15 +66,15 @@ export default function HomePage() {
       </section>
 
       {/* Use Cases */}
-      <section className="px-6 py-20 relative z-10">
+      <section className="px-6 py-24 relative z-10">
         <div className="layout-container">
-          <div className="flex items-center gap-4 mb-8 opacity-60">
+          <div className="flex items-center gap-4 mb-10 opacity-60">
             <div className="h-px bg-white/10 flex-1" />
             <span className="text-xs text-offwhite/40 font-medium tracking-widest uppercase">For Whom</span>
             <div className="h-px bg-white/10 flex-1" />
           </div>
 
-          <div className="grid grid-cols-1 gap-4">
+          <div className="grid grid-cols-1 gap-6">
             {[
               {
                 icon: Home,

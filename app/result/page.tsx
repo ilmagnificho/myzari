@@ -137,7 +137,7 @@ export default function ResultPage() {
                 </section>
 
                 {/* ─── Summary (FREE) ─── */}
-                <section className="mb-12 fade-in-up stagger-1">
+                <section className="mb-16 fade-in-up stagger-1">
                     <div className="p-8 rounded-2xl glass-card text-center relative overflow-hidden group">
                         <div className="absolute inset-0 bg-gradient-to-b from-white/[0.02] to-transparent pointer-events-none" />
                         <p className="text-offwhite/90 leading-relaxed text-base sm:text-lg font-light">
@@ -147,7 +147,7 @@ export default function ResultPage() {
                 </section>
 
                 {/* ─── Good Points ─── */}
-                <div className="space-y-10 mb-16">
+                <div className="space-y-12 mb-20">
                     {result.good_points.length > 0 && (
                         <section className="fade-in-up stagger-2">
                             <div className="flex items-center gap-3 mb-5 pl-1">
