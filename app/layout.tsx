@@ -48,8 +48,8 @@ export default function RootLayout({
         <main className="min-h-screen">{children}</main>
         <footer className="py-8 px-6 text-center border-t border-charcoal/5">
           <p className="text-[11px] text-muted mt-2">
-            본 서비스는 재미와 참고 목적으로 제공되며, 전문 풍수지리 상담을
-            대체하지 않습니다.
+            본 서비스는 <strong>생성형 AI</strong>를 활용하여 분석 결과를 제공합니다.<br />
+            재미와 참고 목적으로만 이용해 주시고, 전문 상담을 대체하지 않습니다.
           </p>
           <div className="mt-3">
             <a

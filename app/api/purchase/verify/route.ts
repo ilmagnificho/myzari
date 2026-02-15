@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { savePurchase, isSupabaseConfigured } from "@/lib/supabase";
+import { verifyPurchaseWithToss } from "@/lib/toss-server";
 
 /**
  * POST /api/purchase/verify
@@ -22,10 +23,8 @@ export async function POST(request: NextRequest) {
         }
 
         // ─── Step 1: Verify with Toss Server API ───
-        // TODO: Implement server-to-server verification with Toss API
-        // const tossVerified = await verifyWithTossAPI(purchaseToken);
-        // For now, accept all tokens (will be replaced with real verification)
-        const isVerified = true;
+        // Use mTLS client to verify purchase token with Toss
+        const isVerified = await verifyPurchaseWithToss(purchaseToken);
 
         if (!isVerified) {
             return NextResponse.json(
