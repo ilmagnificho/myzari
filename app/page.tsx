@@ -3,70 +3,78 @@ import { Compass, Home, Moon, TrendingUp, ArrowRight, Camera } from "lucide-reac
 
 export default function HomePage() {
   return (
-    <div className="flex flex-col min-h-screen overflow-x-hidden">
+    <div className="flex flex-col min-h-screen overflow-x-hidden relative">
+      {/* Aurora Background Effect */}
+      <div className="fixed inset-0 pointer-events-none -z-10">
+        <div className="absolute top-[-20%] left-[-10%] w-[70%] h-[70%] bg-gold/5 rounded-full blur-[120px] aura-glow" style={{ animationDelay: '0s' }} />
+        <div className="absolute bottom-[-10%] right-[-20%] w-[60%] h-[60%] bg-gold-dark/5 rounded-full blur-[100px] aura-glow" style={{ animationDelay: '-4s' }} />
+      </div>
+
       {/* Hero Section */}
-      <section className="flex flex-col items-center justify-center px-6 pt-24 pb-20 sm:pt-40 sm:pb-32">
+      <section className="flex flex-col items-center justify-center px-6 pt-28 pb-24 sm:pt-44 sm:pb-36 relative z-10">
         <div className="layout-container text-center">
           {/* Logo */}
-          <div className="mb-16 fade-in-up flex flex-col items-center">
+          <div className="mb-14 fade-in-up flex flex-col items-center">
             <div className="relative mb-8">
-              <div className="w-20 h-20 rounded-full border-2 border-gold/20 flex items-center justify-center float">
-                <Compass className="w-9 h-9 text-gold" strokeWidth={1.5} />
+              <div className="w-20 h-20 rounded-full border border-gold/20 flex items-center justify-center float bg-cream/30 backdrop-blur-md">
+                <Compass className="w-8 h-8 text-gold" strokeWidth={1.2} />
               </div>
-              <div className="absolute inset-0 rounded-full bg-gold/8 blur-2xl -z-10" />
+              <div className="absolute inset-0 rounded-full bg-gold/10 blur-xl -z-10" />
             </div>
-            <h1 className="text-2xl sm:text-3xl font-semibold text-charcoal tracking-tight">
+            <h1 className="text-2xl sm:text-3xl font-medium text-offwhite tracking-tight">
               마이자리
             </h1>
-            <p className="text-[11px] text-muted mt-1.5 font-medium tracking-[0.25em] uppercase">
+            <p className="text-[10px] text-gold/80 mt-2 font-medium tracking-[0.3em] uppercase opacity-80">
               MyZari — AI Feng Shui
             </p>
           </div>
 
           {/* Headline */}
-          <div className="fade-in-up stagger-1 mx-auto max-w-lg">
-            <h2 className="text-3xl sm:text-[2.75rem] font-bold text-charcoal leading-[1.25] mb-6 tracking-tight">
+          <div className="fade-in-up stagger-1 mx-auto max-w-lg mb-14">
+            <h2 className="text-[2rem] sm:text-[2.75rem] font-bold text-offwhite leading-[1.2] mb-6 tracking-tight">
               당신의 방,<br />
-              <span className="text-gold">좋은 기운</span>이 흐르고 있나요?
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-gold to-gold-light">좋은 기운</span>이 흐르나요?
             </h2>
-            <p className="text-base sm:text-lg text-muted mb-14 leading-relaxed">
-              풍수지리 AI가 방 사진 한 장으로 진단하고,<br />
-              부족한 기운을 채우는 비보(裨補) 솔루션을 추천합니다.
+            <p className="text-base sm:text-lg text-muted/80 leading-relaxed font-light">
+              풍수지리 AI가 공간의 에너지를 읽고,<br />
+              부족한 기운을 채우는 <span className="text-gold/90 font-medium">비보(裨補) 솔루션</span>을 제안합니다.
             </p>
           </div>
 
           {/* CTA */}
-          <div className="fade-in-up stagger-2 flex flex-col items-center">
+          <div className="fade-in-up stagger-2 flex flex-col items-center w-full">
             <Link
               href="/analyze"
-              className="inline-flex items-center gap-3 px-10 py-4.5 bg-charcoal text-offwhite rounded-full text-base font-semibold hover:bg-charcoal/90 transition-all duration-300 active:scale-[0.97] touch-target shadow-[0_8px_30px_-8px_rgba(0,0,0,0.25)]"
+              className="inline-flex items-center justify-center gap-3 w-full sm:w-auto px-10 py-4.5 bg-gradient-to-b from-gold to-gold-dark text-[#111] rounded-full text-base font-semibold hover:brightness-110 transition-all duration-300 active:scale-[0.98] bg-[length:100%_200%] shadow-[0_0_40px_-10px_rgba(219,193,136,0.3)]"
             >
-              <Camera className="w-5 h-5" strokeWidth={1.8} />
+              <Camera className="w-5 h-5 opacity-80" strokeWidth={2} />
               방 진단 시작하기
-              <ArrowRight className="w-4 h-4" strokeWidth={2} />
+              <ArrowRight className="w-4 h-4 opacity-60" strokeWidth={2} />
             </Link>
-            <p className="text-sm text-muted/60 mt-5 font-medium">
-              사진 한 장 · 3초 · 간략 분석 무료
-            </p>
-            <p className="text-xs text-muted/40 mt-1">
+            <div className="flex items-center gap-3 mt-6 text-xs text-muted/50 font-medium">
+              <span>사진 1장</span>
+              <span className="w-1 h-1 rounded-full bg-muted/20" />
+              <span>3초 분석</span>
+              <span className="w-1 h-1 rounded-full bg-muted/20" />
+              <span>간략 결과 무료</span>
+            </div>
+            <p className="text-[10px] text-muted/30 mt-1.5">
               상세 분석은 유료 (₩3,900)
             </p>
           </div>
         </div>
       </section>
 
-      {/* Divider */}
-      <div className="flex justify-center py-4">
-        <div className="w-12 h-px bg-gold/15" />
-      </div>
-
       {/* Use Cases */}
-      <section className="px-6 py-20 sm:py-28">
+      <section className="px-6 py-20 relative z-10">
         <div className="layout-container">
-          <h3 className="text-2xl sm:text-3xl font-bold text-charcoal text-center mb-14 tracking-tight">
-            이런 분께 추천합니다
-          </h3>
-          <div className="grid grid-cols-1 gap-5">
+          <div className="flex items-center gap-4 mb-8 opacity-60">
+            <div className="h-px bg-white/10 flex-1" />
+            <span className="text-xs text-offwhite/40 font-medium tracking-widest uppercase">For Whom</span>
+            <div className="h-px bg-white/10 flex-1" />
+          </div>
+
+          <div className="grid grid-cols-1 gap-4">
             {[
               {
                 icon: Home,
@@ -80,24 +88,24 @@ export default function HomePage() {
               },
               {
                 icon: TrendingUp,
-                title: "운의 흐름을 바꾸고 싶을 때",
-                desc: "소품 하나로 공간의 에너지를 개선하고 싶은 분",
+                title: "운의 흐름 개선",
+                desc: "소품 하나로 공간의 에너지를 바꾸고 싶은 분",
               },
             ].map((item, i) => {
               const Icon = item.icon;
               return (
                 <div
                   key={i}
-                  className="flex items-start gap-5 p-6 rounded-2xl glass-card hover:shadow-[0_8px_30px_-8px_rgba(0,0,0,0.06)] transition-all duration-300"
+                  className="flex items-start gap-5 p-6 rounded-2xl glass-card hover:bg-white/[0.03] transition-colors duration-300 group"
                 >
-                  <div className="w-12 h-12 rounded-xl bg-gold/8 flex items-center justify-center shrink-0">
-                    <Icon className="w-5 h-5 text-gold" strokeWidth={1.5} />
+                  <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center shrink-0 border border-white/5 group-hover:border-gold/20 transition-colors">
+                    <Icon className="w-4 h-4 text-gold/80" strokeWidth={1.5} />
                   </div>
                   <div>
-                    <h4 className="text-base font-semibold text-charcoal mb-1">
+                    <h4 className="text-base font-medium text-offwhite mb-1">
                       {item.title}
                     </h4>
-                    <p className="text-sm text-muted leading-relaxed">
+                    <p className="text-sm text-muted/80 leading-relaxed font-light">
                       {item.desc}
                     </p>
                   </div>
@@ -109,24 +117,23 @@ export default function HomePage() {
       </section>
 
       {/* Final CTA */}
-      <section className="px-6 py-24 sm:py-32 bg-charcoal relative overflow-hidden">
-        <div className="absolute inset-0 opacity-[0.04] pointer-events-none">
-          <div className="absolute top-[-40%] left-[-10%] w-[60%] h-[120%] bg-gold rotate-[30deg] blur-[100px]" />
-          <div className="absolute bottom-[-40%] right-[-10%] w-[60%] h-[120%] bg-white rotate-[30deg] blur-[100px]" />
-        </div>
+      <section className="px-6 py-24 sm:py-32 relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-t from-gold-dark/10 to-transparent pointer-events-none" />
+
         <div className="relative z-10 text-center layout-container">
-          <h4 className="text-2xl sm:text-3xl font-bold text-offwhite mb-4 tracking-tight">
-            지금 바로 당신의 방을<br />명당으로 만들어보세요.
+          <h4 className="text-2xl sm:text-3xl font-bold text-offwhite mb-4 tracking-tight leading-tight">
+            지금 바로 당신의 방을<br />
+            <span className="text-gold">명당</span>으로 만들어보세요.
           </h4>
-          <p className="text-offwhite/40 text-sm mb-10">
-            이미지 즉시 삭제 · 간략 분석 무료
+          <p className="text-muted/50 text-xs mb-10 tracking-wide font-medium">
+            365일 24시간 · AI 즉시 분석
           </p>
           <Link
             href="/analyze"
-            className="inline-flex items-center gap-2 px-10 py-4 bg-gold text-white rounded-full text-base font-semibold hover:bg-gold-dark transition-all duration-300 active:scale-[0.97] shadow-[0_8px_30px_-8px_rgba(197,160,89,0.3)]"
+            className="inline-flex items-center gap-2 px-8 py-3.5 border border-gold/30 text-gold hover:bg-gold/10 rounded-full text-sm font-medium transition-all duration-300"
           >
             진단 시작하기
-            <ArrowRight className="w-4 h-4" strokeWidth={2} />
+            <ArrowRight className="w-4 h-4" strokeWidth={1.5} />
           </Link>
         </div>
       </section>
